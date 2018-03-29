@@ -1,0 +1,94 @@
+; Mpc07.Inf
+;
+; Copyright 2002-2005 StepServo Co., 
+;
+
+[Version]
+Signature="$Chicago$"
+Class=(StepServo)MotionCard
+ClassGUID={8C6E8180-5349-11d8-949D-000AEB18B8E8}
+Provider=%StepServo%
+DriverVer=01/01/2005,2.1.0.0
+
+[ClassInstall32]
+AddReg=ClassAddReg
+
+[ClassAddReg]
+HKR,,,,%StepServoClass%
+HKR,,Icon,,"-5"
+
+[Manufacturer]
+%StepServo% = DMC.400
+
+[DMC.400]
+%MPC07%=Dmc400.Install, PCI\VEN_1100&DEV_4259&SUBSYS_00000000&REV_00
+
+
+[DestinationDirs]
+Dmc400.Files.Driver=10,System32\Drivers
+Dmc400.Files.Driver.NTx86=10,System32\Drivers
+
+[SourceDisksNames]
+1="MPC07 setup CDROM or disk...",,,
+
+[SourceDisksFiles]
+mpc07.sys=,%10%\system32\drivers
+
+[SourceDisksFiles.x86]
+MPC07.sys=,%10%\system32\drivers
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Windows 98
+
+[DMC400.Install]
+CopyFiles=Dmc400.Files.Driver
+AddReg=Dmc400.AddReg
+LogConfig=Dmc400.LogConfig
+Reboot
+
+[Dmc400.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,Mpc07.sys
+
+[Dmc400.Files.Driver]
+Mpc07.sys
+
+[Dmc400.LogConfig]
+;IOConfig=300-320
+;IRQConfig=9
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Windows 2000
+
+[Dmc400.Install.NTx86]
+CopyFiles=Dmc400.Files.Driver.NTx86
+LogConfig=Dmc400.LogConfig
+
+[Dmc400.Files.Driver.NTx86]
+Mpc07.sys,,,%COPYFLG_NOSKIP%
+
+[Dmc400.Install.NTx86.Services]
+AddService = MPC07, %SPSVCINST_ASSOCSERVICE%, Dmc400.Service
+
+[Dmc400.Service]
+DisplayName    = %Dmc400.ServiceName%
+ServiceType    = %SERVICE_KERNEL_DRIVER%
+StartType      = %SERVICE_DEMAND_START%
+ErrorControl   = %SERVICE_ERROR_NORMAL%
+ServiceBinary  = %10%\System32\Drivers\Mpc07.sys
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Strings
+
+[Strings]
+StepServo="Step Servo"
+MPC07="MPC07 Driver"
+Dmc400.ServiceName="MPC07 Driver2"
+StepServoClass="(StepServo)MotionCard"
+
+SPSVCINST_ASSOCSERVICE=0x00000002	; Driver service is associated with device being installed
+COPYFLG_NOSKIP=2	; Do not allow user to skip file
+SERVICE_KERNEL_DRIVER=1
+SERVICE_AUTO_START=2
+SERVICE_DEMAND_START=3
+SERVICE_ERROR_NORMAL=1
